@@ -1,6 +1,6 @@
 import java.io.*;
 
-public class Basket {
+public class Basket implements Serializable {
     String[] products;
     int[] prices;
     int sumProducts = 0; // общая сумма покупки
@@ -58,7 +58,19 @@ public class Basket {
         }
     }
 
-    // метод восстановления объекта корзины из текстового файла, в который ранее была она сохранена
+    //  метод сохранения в файл в бинарном формате
+
+    public void saveBin(File file) throws IOException {
+        try (ObjectOutputStream writer = new ObjectOutputStream(new FileOutputStream(file))) {
+            writer.writeObject(this);
+            writer.flush();
+
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    // метод восстановления объекта корзины из текстового файла
 
     public static Basket loadFromTxtFile(File textFile) {
         String[] products;
@@ -81,6 +93,20 @@ public class Basket {
             }
 
         } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        }
+
+        return basket;
+    }
+//  метод загрузки корзины из бинарного файла.
+
+    public static Basket loadFromBinFile(File file) {
+
+        Basket basket = null;
+        try (ObjectInputStream reader = new ObjectInputStream(new FileInputStream(file))) {
+            basket = (Basket) reader.readObject();
+
+        } catch (IOException | ClassNotFoundException ex) {
             System.out.println(ex.getMessage());
         }
 

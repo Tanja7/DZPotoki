@@ -16,10 +16,10 @@ public class Main {
 
         Basket basket = new Basket(products, prices);
 
-        File file = new File("basket.txt");
+        File file = new File("basket.bin");
         if (file.exists()) {
-            Basket basket1 = Basket.loadFromTxtFile(file);
-            if(basket1 != null)
+            Basket basket1 = Basket.loadFromBinFile(file);
+            if (basket1 != null)
                 basket = basket1;
         }
 
@@ -36,7 +36,7 @@ public class Main {
                 int productCount = Integer.parseInt(parts[1]); // кол-во продукта со сканера
                 basket.addToCart(productNumber, productCount);
                 try {
-                    basket.saveTxt(file);
+                    basket.saveBin(file);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
