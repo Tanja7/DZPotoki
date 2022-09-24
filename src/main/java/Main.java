@@ -3,11 +3,13 @@ import java.io.IOException;
 import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
         Scanner scanner = new Scanner(System.in);
         String products[] = {"Хлеб", "Яблоки", "Молоко", "Морковь", "Конфеты"};
-        int prices[] = {60, 130, 80, 20, 300};
+        int[] prices = new int[]{60, 130, 80, 20, 300};
+
+        ClientLog log = new ClientLog();
 
         System.out.println("Список возможных товаров для покупки: ");
         for (int i = 0; i < products.length; i++) {
@@ -16,10 +18,10 @@ public class Main {
 
         Basket basket = new Basket(products, prices);
 
-        File file = new File("basket.txt");
+        File file = new File("basket.json");
         if (file.exists()) {
-            Basket basket1 = Basket.loadFromTxtFile(file);
-            if(basket1 != null)
+            Basket basket1 = Basket.loadFromJsonFile(file);
+            if (basket1 != null)
                 basket = basket1;
         }
 
@@ -35,8 +37,9 @@ public class Main {
                 int productNumber = Integer.parseInt(parts[0]) - 1; //номер продукта со сканера
                 int productCount = Integer.parseInt(parts[1]); // кол-во продукта со сканера
                 basket.addToCart(productNumber, productCount);
+                log.log(productNumber, productCount);
                 try {
-                    basket.saveTxt(file);
+                    basket.saveJson(file);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -44,6 +47,8 @@ public class Main {
             }
         }
         basket.printCart();
-    }
 
+        File logFile = new File("log.csv");
+        log.exportAsCSV(logFile);
+    }
 }

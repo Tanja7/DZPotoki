@@ -1,10 +1,23 @@
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.io.*;
 
 public class Basket {
-    String[] products;
-    int[] prices;
-    int sumProducts = 0; // общая сумма покупки
-    int[] count; // массив для хранения количества продуктов
+    private String[] products;
+    private int[] prices;
+    private int sumProducts = 0; // общая сумма покупки
+    private int[] count; // массив для хранения количества продуктов
+
+
+    public String[] getProducts() {
+        return products;
+    }
+
+    public int[] getPrices() {
+        return prices;
+    }
+
 
     // конструктор, принимающий массив цен и названий продуктов;
 
@@ -84,6 +97,33 @@ public class Basket {
             System.out.println(ex.getMessage());
         }
 
+        return basket;
+    }
+
+    //  метод сохранения корзины в json файл
+    public void saveJson(File textFile) throws IOException {
+
+        try (FileWriter writer = new FileWriter(textFile)) {
+            Gson gson = new GsonBuilder()
+                    .setPrettyPrinting()
+                    .create();
+            gson.toJson(this, writer);
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+    // метод восстановления объекта корзины из json файла, в который ранее была она сохранена
+
+    public static Basket loadFromJsonFile(File textFile) {
+
+        Basket basket = null;
+
+        try (FileReader fileReader = new FileReader(textFile)) {
+            Gson gson = new Gson();
+            basket = gson.fromJson(fileReader, Basket.class);
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        }
         return basket;
     }
 
